@@ -65,3 +65,23 @@ class Ocorrencia(models.Model):
 
     def __str__(self):
         return f"{self.aluno.nome} - {self.tipo} - {self.data:%d/%m/%Y}"
+class Circulacao(models.Model):
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name="circulacoes", verbose_name="Aluno")
+    saida =models.DateTimeField(auto_now_add=True, verbose_name="Saída")
+    retorno = models.DateTimeField(null=True, blank=True, verbose_name="Retorno")
+    registrado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="Registrado por")
+    alerta_enviado = models.BooleanField(default=False, verbose_name="Alerta Enviado")
+
+    def __str__(self):
+        return f"{self.aluno.nome} - {self.saida:%d/%m/%Y %H:%M}"
+
+class frequencia(models.Model):
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name="frequencia", verbose_name="Aluno")
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE, verbose_name="Turma")
+    data = models.DateField(auto_created=True, verbose_name="Data")
+    presente = models.BooleanField(default=True, verbose_name="Present")
+    justificativa = models.TextField(null=True, blank=True, verbose_name="Justificativa")
+
+    def __str__(self):
+        status = "Presente" if self.presente else "Ausente"
+        return f"{self.aluno.nome} - {self.data:%d/%m/%Y} - {status}"
