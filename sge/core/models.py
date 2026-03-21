@@ -4,13 +4,13 @@ from django.core.validators import MinValueValidator
 
 class Turma(models.Model):
     SERIES = [
-        ('fund_6', '6º Ano - Fundamental'),
-        ('fund_7', '7º Ano - Fundamental'),
-        ('fund_8', '8º Ano - Fundamental'),
-        ('fund_9', '9º Ano - Fundamental'),
-        ('med_1', '1º Ano - Médio'),
-        ('med_2', '2º Ano - Médio'),
-        ('med_3', '3º Ano - Médio'),
+        ("fund_6", "6º Ano - Fundamental"),
+        ("fund_7", "7º Ano - Fundamental"),
+        ("fund_8", "8º Ano - Fundamental"),
+        ("fund_9", "9º Ano - Fundamental"),
+        ("med_1", "1º Ano - Médio"),
+        ("med_2", "2º Ano - Médio"),
+        ("med_3", "3º Ano - Médio"),
     ]
 
     TIPOS = [
@@ -75,13 +75,45 @@ class Circulacao(models.Model):
     def __str__(self):
         return f"{self.aluno.nome} - {self.saida:%d/%m/%Y %H:%M}"
 
-class frequencia(models.Model):
+class Frequencia(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name="frequencia", verbose_name="Aluno")
     turma = models.ForeignKey(Turma, on_delete=models.CASCADE, verbose_name="Turma")
-    data = models.DateField(auto_created=True, verbose_name="Data")
+    data = models.DateField(auto_now_add=True, verbose_name="Data")
     presente = models.BooleanField(default=True, verbose_name="Present")
     justificativa = models.TextField(null=True, blank=True, verbose_name="Justificativa")
 
     def __str__(self):
         status = "Presente" if self.presente else "Ausente"
         return f"{self.aluno.nome} - {self.data:%d/%m/%Y} - {status}"
+
+class Perfil(models.Model):
+    TIPO = [
+        ("professor", "Professor"),
+        ("monitor", "Monitor"),
+        ("direcao", "Direção"),
+        ("responsavel", "Responsável"),
+    ]
+
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil", verbose_name="Usuário")
+    tipo = models.CharField(max_length=15, choices=TIPO, verbose_name="Tipo de Perfil")
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.get_tipo_display()}"
+    
+class Notificacao(models.Model):
+    TIPOS = [
+    ("ocorrencia", "Ocorrência Disciplinar"),
+    ("falta", "Falta"),
+    ("atraso", "Atraso"),
+    ("matando_aula", "Matando Aula"),
+    ("acumulo_ocorrencias", "Acúmulo de Ocorrências"),
+]
+    
+    destinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificacoes", verbose_name="Destinatário")
+    tipo = models.CharField(max_length=20, choices=TIPOS, verbose_name="Tipo")
+    mensagem = models.TextField(verbose_name="Mensagem")
+    lida = models.BooleanField(default=False, verbose_name="Lida")
+    data = models.DateTimeField(auto_now_add=True, verbose_name="Data")
+
+    def __str__(self):
+        return f'{self.destinatario.username} - {self.tipo} - {self.data:%d/%m/%Y %H:%M}'
