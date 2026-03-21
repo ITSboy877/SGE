@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGE - Login</title>
+</head>
+<body>
+    <h1>SGE - Sistema de Gestão Escolar</h1>
+
+    {% if erro %}
+        <p>{{ erro }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <label>Usuário:</label>
+        <input type="text" name="username">
+        <label>Senha:</label>
+        <input type="password" name="password">
+        <button type="submit">Entrar</button>
+    </form>
+</body>
+</html>
