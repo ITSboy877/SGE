@@ -4,21 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SGE - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body>
-    <h1>SGE - Sistema de Gestão Escolar</h1>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
 
-    {% if erro %}
-        <p>{{ erro }}</p>
-    {% endif %}
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4">SGE</h2>
+        <p class="text-center text-muted mb-4">Sistema de Gestão Escolar</p>
 
-    <form method="POST">
-        {% csrf_token %}
-        <label>Usuário:</label>
-        <input type="text" name="username">
-        <label>Senha:</label>
-        <input type="password" name="password">
-        <button type="submit">Entrar</button>
-    </form>
+        {% if erro %}
+            <div class="alert alert-danger">{{ erro }}</div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                        <label class="form-label">Usuário</label>
+                <input type="text" name="username" class="form-control" placeholder="Digite seu usuário">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Senha</label>
+                <div class="input-group">
+                    <input type="password" name="password" id="senha" class="form-control" placeholder="Digite sua senha">
+                    <button class="btn btn-outline-secondary" type="button" onclick="toggleSenha()">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function toggleSenha() {
+        const campo = document.getElementById("senha");
+        const icone = document.querySelector(".bi-eye, .bi-eye-slash");
+        if (campo.type === "password") {
+            campo.type = "text";
+            icone.classList.replace("bi-eye", "bi-eye-slash");
+        } else {
+            campo.type = "password";
+            icone.classList.replace("bi-eye-slash", "bi-eye");
+        }
+    }
+    </script>
 </body>
 </html>
