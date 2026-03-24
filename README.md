@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  📚 SGE — Sistema de Gestão Escolar
+  SGE — Sistema de Gestão Escolar
   <br>
 </h1>
 
@@ -18,47 +18,57 @@
 
 ---
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
 O SGE é um sistema desenvolvido como TCC (Trabalho de Conclusão de Curso) que busca substituir processos manuais ainda presentes em muitas escolas brasileiras — como cadernos de ocorrências físicos, bilhetes impressos e registros em papel — por uma plataforma digital integrada, moderna e acessível de qualquer dispositivo.
 
-## ✨ Funcionalidades
+---
 
-- 🔄 **Controle de Circulação** — registro de saída de alunos com timer automático de 5 minutos e alertas para monitores e direção
-- 📋 **Livro de Ocorrências Digital** — registro de ocorrências com histórico por aluno e notificação automática aos responsáveis
-- 📊 **Chamada Eletrônica** — registro de frequência com possibilidade de justificativa de faltas pelos responsáveis
-- 📱 **Comunicação Escola-Família** — notificações push em tempo real para os responsáveis
-- 📈 **Dashboard Inteligente** — indicadores de presença por turma, alunos fora de sala e ocorrências do período
+## Funcionalidades
 
-## 👥 Perfis de Usuário
+- **Controle de Circulacao** — registro de saída de alunos com timer automático de 5 minutos, alerta visual, sonoro e notificação para monitores e direção
+- **Livro de Ocorrencias Digital** — registro de ocorrências com histórico por aluno e notificação automática aos responsáveis
+- **Chamada Eletronica** — registro de frequência com possibilidade de justificativa de faltas pelos responsáveis
+- **Comunicacao Escola-Família** — notificações em tempo real para os responsáveis
+- **Dashboard Inteligente** — indicadores em tempo real de alunos fora de sala, ocorrências do dia e total de alunos
+
+---
+
+## Perfis de Usuário
 
 | Perfil | Permissões |
-|--------|-----------|
+|--------|------------|
 | **Professor** | Registrar circulação, chamada e ocorrências |
 | **Monitor** | Receber alertas de circulação e registrar ocorrências |
-| **Direção** | Acesso completo ao sistema e relatórios |
-| **Responsável** | Visualizar informações dos filhos e justificar faltas |
+| **Direcao** | Acesso completo ao sistema e relatórios |
+| **Responsavel** | Visualizar informações dos filhos e justificar faltas |
 
-## 🛠️ Tecnologias
+---
+
+## Tecnologias
 
 - **Back-end:** Python 3.14 + Django 6.0.3
-- **Front-end:** HTML, CSS, JavaScript, Bootstrap 5
+- **Front-end:** HTML, CSS, JavaScript, Bootstrap 5.3, Bootstrap Icons 1.11
 - **Banco de dados:** SQLite (desenvolvimento) / PostgreSQL (produção)
 - **Hospedagem:** Railway
+- **Admin:** Django Jazzmin
 - **Formato:** PWA (Progressive Web App)
 
-## 🗃️ Models
+---
 
-- `Turma` — séries do Fundamental II ao Ensino Médio
+## Models
+
+- `Turma` — séries do Fundamental II ao Ensino Médio/Técnico
 - `Aluno` — cadastro de alunos vinculados a turmas
 - `Ocorrencia` — registro disciplinar com tipo, gravidade e local
-- `Circulacao` — controle de saída e retorno de alunos
+- `Circulacao` — controle de saída e retorno de alunos com timer
 - `Frequencia` — chamada eletrônica diária
 - `Perfil` — tipo de perfil de cada usuário
 - `Notificacao` — histórico de notificações enviadas
 
-## 🚀 Como rodar localmente
+---
 
+## Como rodar localmente
 ```bash
 # Clone o repositório
 git clone https://github.com/ITSboy877/SGE.git
@@ -66,11 +76,11 @@ cd SGE/sge
 
 # Crie e ative o ambiente virtual
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
 
 # Instale as dependências
-pip install django
+pip install django django-jazzmin
 
 # Rode as migrations
 python manage.py migrate
@@ -84,25 +94,34 @@ python manage.py runserver
 
 Acesse `http://127.0.0.1:8000/login/`
 
-## 📅 Status do Desenvolvimento
+---
+
+## Status do Desenvolvimento
 
 - [x] Models e banco de dados
-- [x] Sistema de autenticação
-- [ ] Interface com Bootstrap 5
-- [ ] Dashboard com indicadores
-- [ ] Módulo de circulação com timer
+- [x] Sistema de autenticação (login/logout)
+- [x] Layout com Bootstrap 5 — sidebar, topbar, cards
+- [x] Dashboard com dados reais do banco
+- [x] Módulo de circulação com timer de 5 minutos
+- [x] Alertas visuais, sonoros e registro no banco
+- [x] Admin customizado com Django Jazzmin
 - [ ] Módulo de ocorrências
 - [ ] Módulo de chamada
+- [ ] Telas de alunos e turmas
+- [ ] Sistema de perfis e permissões
 - [ ] Notificações push
 - [ ] Importação via planilha Excel
 - [ ] Deploy no Railway
 
-## ✍️ Autor
+---
+
+## Autor
 
 **Guilherme H. A. Ribeiro**
+
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Guilherme%20Ribeiro-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/guilherme-ribeiro-040906364)
 [![GitHub](https://img.shields.io/badge/GitHub-ITSboy877-black?style=flat-square&logo=github)](https://github.com/ITSboy877)
 
 ---
 
-<p align="center">Desenvolvido com 💙 como TCC</p>
+<p align="center">Desenvolvido como TCC</p>
