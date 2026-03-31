@@ -1,0 +1,115 @@
+{% extends "core/base.html" %}
+
+{% block title %}{% if ocorrencia %}Editar Ocorrencia{% else %}Nova Ocorrencia{% endif %}{% endblock %}
+{% block topbar_title %}Livro de Ocorrencias{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0 fw-bold">{% if ocorrencia %}Editar Ocorrencia{% else %}Nova Ocorrencia{% endif %}</h5>
+    <a href="{% url 'ocorrencia_list' %}" class="btn btn-outline-secondary">Voltar</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-4">
+                <label class="form-label">Turma</label>
+                <select id="sel-turma" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for turma in turmas %}
+                    <option value="{{ turma.id }}" {% if ocorrencia and ocorrencia.turma_id == turma.id %}selected{% endif %}>{{ turma.get_serie_display }} - {{ turma.ano }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-8">
+                <label class="form-label">Aluno</label>
+                <select name="aluno" id="sel-aluno" class="form-select" required>
+                    {% if ocorrencia %}
+                    <option value="{{ ocorrencia.aluno_id }}">{{ ocorrencia.aluno.nome }}</option>
+                    {% else %}
+                    <option value="">Selecione a turma primeiro...</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Tipo</label>
+                <select name="tipo" class="form-select" required>
+                    {% for value, label in tipos %}
+                    <option value="{{ value }}" {% if ocorrencia and ocorrencia.tipo == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Gravidade</label>
+                <select name="gravidade" class="form-select" required>
+                    {% for value, label in gravidades %}
+                    <option value="{{ value }}" {% if ocorrencia and ocorrencia.gravidade == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Local</label>
+                <select name="local" class="form-select" required>
+                    {% for value, label in locais %}
+                    <option value="{{ value }}" {% if ocorrencia and ocorrencia.local == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Descricao</label>
+                <textarea name="descricao" class="form-control" rows="4">{% if ocorrencia and ocorrencia.descricao %}{{ ocorrencia.descricao }}{% endif %}</textarea>
+            </div>
+            {% if ocorrencia %}
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="notificacao" id="notificacao" {% if ocorrencia.notificacao %}checked{% endif %}>
+                    <label class="form-check-label" for="notificacao">Responsavel notificado</label>
+                </div>
+            </div>
+            {% endif %}
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const turmaSelect = document.getElementById("sel-turma");
+const alunoSelect = document.getElementById("sel-aluno");
+const alunoSelecionado = "{% if ocorrencia %}{{ ocorrencia.aluno_id }}{% else %}{% endif %}";
+
+function carregarAlunos(turmaId) {
+    if (!turmaId) {
+        alunoSelect.innerHTML = "<option value=''>Selecione a turma primeiro...</option>";
+        return;
+    }
+
+    fetch("/circulacao/alunos/" + turmaId + "/")
+        .then(function (res) { return res.json(); })
+        .then(function (alunos) {
+            alunoSelect.innerHTML = "<option value=''>Selecione...</option>";
+            alunos.forEach(function (a) {
+                const opt = document.createElement("option");
+                opt.value = a.id;
+                opt.textContent = a.numero_chamada + " - " + a.nome;
+                if (alunoSelecionado && String(a.id) === String(alunoSelecionado)) {
+                    opt.selected = true;
+                }
+                alunoSelect.appendChild(opt);
+            });
+        });
+}
+
+turmaSelect.addEventListener("change", function () {
+    carregarAlunos(this.value);
+});
+
+if (turmaSelect.value) {
+    carregarAlunos(turmaSelect.value);
+}
+</script>
+{% endblock %}

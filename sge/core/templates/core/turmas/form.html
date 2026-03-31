@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+
+{% block title %}{% if turma %}Editar Turma{% else %}Nova Turma{% endif %}{% endblock %}
+{% block topbar_title %}Gestao de Turmas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0 fw-bold">{% if turma %}Editar Turma{% else %}Nova Turma{% endif %}</h5>
+    <a href="{% url 'turma_list' %}" class="btn btn-outline-secondary">Voltar</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-4">
+                <label class="form-label">Serie</label>
+                <select name="serie" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for value, label in series %}
+                    <option value="{{ value }}" {% if turma and turma.serie == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Tipo</label>
+                <select name="tipo" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for value, label in tipos %}
+                    <option value="{{ value }}" {% if turma and turma.tipo == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Ano Letivo</label>
+                <input type="number" name="ano" class="form-control" min="2020" max="2100" value="{% if turma %}{{ turma.ano }}{% endif %}" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

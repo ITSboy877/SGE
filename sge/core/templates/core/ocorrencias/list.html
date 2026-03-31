@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+
+{% block title %}Ocorrencias{% endblock %}
+{% block topbar_title %}Livro de Ocorrencias{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0 fw-bold">Ocorrencias</h5>
+    <a href="{% url 'ocorrencia_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Nova Ocorrencia
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        {% if ocorrencias %}
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3">Data</th>
+                    <th>Aluno</th>
+                    <th>Tipo</th>
+                    <th>Gravidade</th>
+                    <th>Local</th>
+                    <th class="text-end pe-3">Acoes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in ocorrencias %}
+                <tr>
+                    <td class="ps-3">{{ o.data|date:"d/m/Y" }}</td>
+                    <td>{{ o.aluno.nome }}</td>
+                    <td>{{ o.get_tipo_display }}</td>
+                    <td>{{ o.get_gravidade_display }}</td>
+                    <td>{{ o.get_local_display }}</td>
+                    <td class="text-end pe-3">
+                        <a href="{% url 'ocorrencia_edit' o.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form method="POST" action="{% url 'ocorrencia_delete' o.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted text-center py-4 mb-0">Nenhuma ocorrencia registrada.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

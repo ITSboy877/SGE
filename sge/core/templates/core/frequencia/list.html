@@ -1,0 +1,91 @@
+{% extends "core/base.html" %}
+
+{% block title %}Chamada{% endblock %}
+{% block topbar_title %}Chamada e Frequencia{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Turma</label>
+                <select name="turma" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for turma in turmas %}
+                    <option value="{{ turma.id }}" {% if turma_selecionada and turma.id == turma_selecionada.id %}selected{% endif %}>
+                        {{ turma.get_serie_display }} - {{ turma.ano }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Data</label>
+                <input type="text" class="form-control" value="{{ hoje|date:'d/m/Y' }}" disabled>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Carregar Alunos</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if turma_selecionada %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0 fw-bold">Lista de Presenca - {{ turma_selecionada.get_serie_display }}</h5>
+    <button type="button" class="btn btn-outline-secondary btn-sm" id="marcar-todos">Marcar Todos Presentes</button>
+</div>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="turma" value="{{ turma_selecionada.id }}">
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            {% if alunos %}
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">N</th>
+                        <th>Aluno</th>
+                        <th class="text-center">Presente</th>
+                        <th>Justificativa (se ausente)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aluno in alunos %}
+                    <tr>
+                        <td class="ps-3">{{ aluno.numero_chamada }}</td>
+                        <td>{{ aluno.nome }}</td>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input presente-check" name="presentes" value="{{ aluno.id }}"
+                                {% if registros_presenca %}{% if aluno.id in registros_presenca %}checked{% endif %}{% else %}checked{% endif %}>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm" name="just_{{ aluno.id }}">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted text-center py-4 mb-0">Nenhum aluno cadastrado nessa turma.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if alunos %}
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Salvar Chamada</button>
+    </div>
+    {% endif %}
+</form>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("marcar-todos")?.addEventListener("click", function () {
+    document.querySelectorAll(".presente-check").forEach(function (el) { el.checked = true; });
+});
+</script>
+{% endblock %}

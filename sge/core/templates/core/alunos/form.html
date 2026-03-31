@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block title %}{% if aluno %}Editar Aluno{% else %}Novo Aluno{% endif %}{% endblock %}
+{% block topbar_title %}Gestao de Alunos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0 fw-bold">{% if aluno %}Editar Aluno{% else %}Novo Aluno{% endif %}</h5>
+    <a href="{% url 'aluno_list' %}" class="btn btn-outline-secondary">Voltar</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-6">
+                <label class="form-label">Nome Completo</label>
+                <input type="text" name="nome" class="form-control" value="{% if aluno %}{{ aluno.nome }}{% endif %}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Numero de Chamada</label>
+                <input type="number" name="numero_chamada" class="form-control" min="1" value="{% if aluno %}{{ aluno.numero_chamada }}{% endif %}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Turma</label>
+                <select name="turma" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for turma in turmas %}
+                    <option value="{{ turma.id }}" {% if aluno and aluno.turma_id == turma.id %}selected{% endif %}>{{ turma.get_serie_display }} - {{ turma.ano }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

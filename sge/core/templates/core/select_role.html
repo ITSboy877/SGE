@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGE - Tipo de Acesso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(circle at 20% 20%, #f8fbff, #eef2f7 50%, #e8edf5 100%);
+        }
+        .role-card {
+            width: 100%;
+            max-width: 520px;
+            border: 0;
+            border-radius: 18px;
+        }
+        .role-btn {
+            border: 1px solid #d9e1ee;
+            border-radius: 12px;
+            padding: 12px 14px;
+            text-align: left;
+            color: #1a3a5c;
+            background: #fff;
+            transition: all 0.2s ease;
+        }
+        .role-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(26, 58, 92, 0.1);
+            border-color: #b7c7df;
+            color: #122b45;
+        }
+        .role-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            background: #f1f5fb;
+        }
+        .role-note {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+    <div class="card role-card shadow-lg">
+        <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="mb-2">
+                    <i class="bi bi-mortarboard-fill fs-1 text-primary"></i>
+                </div>
+                <h2 class="mb-1">SGE</h2>
+                <p class="text-muted mb-0">Escolha seu tipo de acesso</p>
+            </div>
+
+            <div class="d-grid gap-3">
+                <a href="{% url 'login' %}?perfil=direcao" class="text-decoration-none role-btn">
+                    <span class="role-icon"><i class="bi bi-building"></i></span>Direcao
+                </a>
+                <a href="{% url 'login' %}?perfil=professor" class="text-decoration-none role-btn">
+                    <span class="role-icon"><i class="bi bi-person-workspace"></i></span>Professor
+                </a>
+                <a href="{% url 'login' %}?perfil=monitor" class="text-decoration-none role-btn">
+                    <span class="role-icon"><i class="bi bi-person-badge"></i></span>Monitor
+                </a>
+                <a href="{% url 'login' %}?perfil=responsavel" class="text-decoration-none role-btn">
+                    <span class="role-icon"><i class="bi bi-people"></i></span>Responsavel
+                </a>
+            </div>
+
+            <p class="role-note text-center mt-4 mb-0">
+                O acesso e as funcionalidades exibidas serao ajustados conforme o perfil selecionado.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

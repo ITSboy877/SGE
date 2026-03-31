@@ -15,21 +15,28 @@ def home_view(request):
     return render(request, "core/home.html")
 
 
-def user_role(user):
+# MUDANCA 1: user_role agora aceita perfil_escolhido como parametro
+# para que o superuser possa assumir qualquer perfil
+def user_role(user, perfil_escolhido=None):
     if user.is_superuser:
-        return "direcao"
+        return perfil_escolhido if perfil_escolhido else "direcao"
     try:
         return user.perfil.tipo
     except Perfil.DoesNotExist:
         return None
 
 
+# MUDANCA 2: role_required agora le o perfil_ativo da sessao para superuser
+# em vez de fixar sempre como "direcao"
 def role_required(*allowed_roles):
     def decorator(view_func):
         @login_required
         @wraps(view_func)
         def wrapped(request, *args, **kwargs):
-            role = user_role(request.user)
+            if request.user.is_superuser:
+                role = request.session.get("perfil_ativo", "direcao")
+            else:
+                role = user_role(request.user)
             if role in allowed_roles:
                 return view_func(request, *args, **kwargs)
             return redirect("dashboard")
@@ -56,7 +63,6 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            perfil_real = user_role(user)
             if perfil_escolhido not in perfis_validos:
                 return render(
                     request,
@@ -68,18 +74,27 @@ def login_view(request):
                         "perfil_escolhido": perfil_escolhido,
                     },
                 )
-            if perfil_real != perfil_escolhido:
-                return render(
-                    request,
-                    "core/login.html",
-                    {
-                        "erro": "Tipo de acesso nao corresponde ao usuario informado.",
-                        "perfis_login": perfis_login,
-                        "username": username,
-                        "perfil_escolhido": perfil_escolhido,
-                    },
-                )
+
+            # MUDANCA 3: superuser pula a verificacao de perfil e pode entrar em qualquer tipo
+            # usuarios normais continuam sendo validados normalmente
+            if not user.is_superuser:
+                perfil_real = user_role(user)
+                if perfil_real != perfil_escolhido:
+                    return render(
+                        request,
+                        "core/login.html",
+                        {
+                            "erro": "Tipo de acesso nao corresponde ao usuario informado.",
+                            "perfis_login": perfis_login,
+                            "username": username,
+                            "perfil_escolhido": perfil_escolhido,
+                        },
+                    )
+
             login(request, user)
+            # MUDANCA 4: salva o perfil escolhido na sessao
+            # context_processors e role_required vao ler daqui
+            request.session["perfil_ativo"] = perfil_escolhido
             return redirect("dashboard")
         else:
             return render(
@@ -92,6 +107,7 @@ def login_view(request):
                     "perfil_escolhido": perfil_escolhido,
                 },
             )
+
     perfil_escolhido = request.GET.get("perfil")
     if perfil_escolhido not in perfis_validos:
         return render(request, "core/select_role.html", {"perfis_login": perfis_login})
