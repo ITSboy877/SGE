@@ -7,13 +7,13 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.14-blue?style=flat-square&logo=python" />
   <img src="https://img.shields.io/badge/Django-6.0.3-green?style=flat-square&logo=django" />
-  <img src="https://img.shields.io/badge/Bootstrap-5-purple?style=flat-square&logo=bootstrap" />
+  <img src="https://img.shields.io/badge/Bootstrap-5.3-purple?style=flat-square&logo=bootstrap" />
   <img src="https://img.shields.io/badge/Railway-Hospedagem-black?style=flat-square&logo=railway" />
   <img src="https://img.shields.io/badge/Status-Em%20desenvolvimento-yellow?style=flat-square" />
 </p>
 
 <p align="center">
-  Aplicação web no formato PWA para digitalizar e centralizar a gestão escolar de instituições de ensino brasileiras.
+  Aplicação web para digitalizar e centralizar a gestão escolar de instituições de ensino brasileiras.
 </p>
 
 ---
@@ -22,53 +22,118 @@
 
 O SGE é um sistema desenvolvido como TCC (Trabalho de Conclusão de Curso) que busca substituir processos manuais ainda presentes em muitas escolas brasileiras — como cadernos de ocorrências físicos, bilhetes impressos e registros em papel — por uma plataforma digital integrada, moderna e acessível de qualquer dispositivo.
 
+O sistema possui controle de acesso por perfil de usuário, onde cada tipo (Direção, Professor, Monitor e Responsável) enxerga apenas as funcionalidades que lhe cabem.
+
 ---
 
 ## Funcionalidades
 
-- **Controle de Circulacao** — registro de saída de alunos com timer automático de 5 minutos, alerta visual, sonoro e notificação para monitores e direção
-- **Livro de Ocorrencias Digital** — registro de ocorrências com histórico por aluno e notificação automática aos responsáveis
-- **Chamada Eletronica** — registro de frequência com possibilidade de justificativa de faltas pelos responsáveis
-- **Comunicacao Escola-Família** — notificações em tempo real para os responsáveis
-- **Dashboard Inteligente** — indicadores em tempo real de alunos fora de sala, ocorrências do dia e total de alunos
+- **Controle de Circulação** — registro de saída de alunos com timer automático de 5 minutos, alerta visual, sonoro e notificação para monitores e direção
+- **Livro de Ocorrências Digital** — registro de ocorrências com tipo, gravidade, local e histórico por aluno
+- **Chamada Eletrônica** — registro de frequência diária por turma com suporte a justificativa de faltas
+- **Dashboard Inteligente** — indicadores em tempo real com filtro por Hoje, Semana ou Mês; alunos em circulação e alunos que excederam o limite de tempo
+- **Controle de Acesso por Perfil** — cada perfil acessa apenas o que é permitido, tanto no menu quanto nas rotas
 
 ---
 
 ## Perfis de Usuário
 
-| Perfil | Permissões |
-|--------|------------|
-| **Professor** | Registrar circulação, chamada e ocorrências |
-| **Monitor** | Receber alertas de circulação e registrar ocorrências |
-| **Direcao** | Acesso completo ao sistema e relatórios |
-| **Responsavel** | Visualizar informações dos filhos e justificar faltas |
+| Perfil | Acesso |
+|--------|--------|
+| **Direção** | Acesso completo: Dashboard, Circulação, Ocorrências, Chamada, Alunos e Turmas |
+| **Professor** | Dashboard, Circulação, Ocorrências e Chamada |
+| **Monitor** | Dashboard, Circulação e Ocorrências |
+| **Responsável** | Apenas Dashboard |
+
+> O superusuário criado via `createsuperuser` pode escolher qualquer um dos 4 perfis na tela de login e terá exatamente as permissões daquele perfil.
 
 ---
 
 ## Tecnologias
 
 - **Back-end:** Python 3.14 + Django 6.0.3
-- **Front-end:** HTML, CSS, JavaScript, Bootstrap 5.3, Bootstrap Icons 1.11
+- **Front-end:** Bootstrap 5.3 + Bootstrap Icons 1.11 + JavaScript vanilla
 - **Banco de dados:** SQLite (desenvolvimento) / PostgreSQL (produção)
-- **Hospedagem:** Railway
-- **Admin:** Django Jazzmin
-- **Formato:** PWA (Progressive Web App)
+- **Hospedagem:** Railway (planejado)
+- **Admin:** Django Jazzmin (tema Cosmo)
+
+---
+
+## Estrutura do Projeto
+
+```
+SGE/
+├── sge/
+│   ├── core/
+│   │   ├── migrations/
+│   │   ├── templates/
+│   │   │   └── core/
+│   │   │       ├── alunos/
+│   │   │       │   ├── form.html
+│   │   │       │   └── list.html
+│   │   │       ├── frequencia/
+│   │   │       │   └── list.html
+│   │   │       ├── ocorrencias/
+│   │   │       │   ├── form.html
+│   │   │       │   └── list.html
+│   │   │       ├── turmas/
+│   │   │       │   ├── form.html
+│   │   │       │   └── list.html
+│   │   │       ├── base.html
+│   │   │       ├── circulacao.html
+│   │   │       ├── dashboard.html
+│   │   │       ├── home.html
+│   │   │       ├── login.html
+│   │   │       └── select_role.html
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── context_processors.py
+│   │   ├── models.py
+│   │   ├── urls.py (em sge/sge/urls.py)
+│   │   └── views.py
+│   └── sge/
+│       ├── settings.py
+│       ├── urls.py
+│       ├── asgi.py
+│       └── wsgi.py
+└── manage.py
+```
 
 ---
 
 ## Models
 
-- `Turma` — séries do Fundamental II ao Ensino Médio/Técnico
-- `Aluno` — cadastro de alunos vinculados a turmas
-- `Ocorrencia` — registro disciplinar com tipo, gravidade e local
-- `Circulacao` — controle de saída e retorno de alunos com timer
-- `Frequencia` — chamada eletrônica diária
-- `Perfil` — tipo de perfil de cada usuário
-- `Notificacao` — histórico de notificações enviadas
+| Model | Descrição | Campos principais |
+|-------|-----------|-------------------|
+| `Turma` | Turmas do Fundamental II ao Médio/Técnico | serie, tipo, ano |
+| `Aluno` | Cadastro de alunos vinculados a turmas | nome, numero_chamada, turma, responsavel |
+| `Ocorrencia` | Registro disciplinar | tipo, gravidade, local, descricao, data, notificacao |
+| `Circulacao` | Controle de saída e retorno com timer | saida, retorno, alerta_enviado |
+| `Frequencia` | Chamada eletrônica diária | presente, justificativa, data |
+| `Perfil` | Tipo de perfil do usuário | tipo (direcao/professor/monitor/responsavel) |
+| `Notificacao` | Histórico de notificações | tipo, mensagem, lida, data |
+
+---
+
+## Rotas
+
+| Rota | Descrição |
+|------|-----------|
+| `/` | Dashboard (redireciona para login se não autenticado) |
+| `/home/` | Tela inicial de apresentação |
+| `/login/` | Seleção de perfil + formulário de login |
+| `/dashboard/` | Painel principal |
+| `/circulacao/` | Controle de saída e retorno de alunos |
+| `/ocorrencias/` | Listagem e registro de ocorrências |
+| `/frequencia/` | Chamada eletrônica por turma |
+| `/alunos/` | CRUD de alunos (somente Direção) |
+| `/turmas/` | CRUD de turmas (somente Direção) |
+| `/admin/` | Painel administrativo Django Jazzmin |
 
 ---
 
 ## Como rodar localmente
+
 ```bash
 # Clone o repositório
 git clone https://github.com/ITSboy877/SGE.git
@@ -76,8 +141,9 @@ cd SGE/sge
 
 # Crie e ative o ambiente virtual
 python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
+source venv/bin/activate     # Linux/Mac
+venv\Scripts\activate        # Windows (PowerShell)
+source venv/Scripts/activate # Windows (Git Bash)
 
 # Instale as dependências
 pip install django django-jazzmin
@@ -94,24 +160,28 @@ python manage.py runserver
 
 Acesse `http://127.0.0.1:8000/login/`
 
+> Na tela de login, escolha qualquer perfil — o superusuário tem acesso a todos eles.
+
 ---
 
 ## Status do Desenvolvimento
 
-- [x] Models e banco de dados
-- [x] Sistema de autenticação (login/logout)
-- [x] Layout com Bootstrap 5 — sidebar, topbar, cards
-- [x] Dashboard com dados reais do banco
-- [x] Módulo de circulação com timer de 5 minutos
-- [x] Alertas visuais, sonoros e registro no banco
+- [x] Models e banco de dados (7 models)
+- [x] Sistema de autenticação com seleção de perfil
+- [x] Controle de acesso por perfil (Direção, Professor, Monitor, Responsável)
+- [x] Layout base com Bootstrap 5 — sidebar condicional por perfil, topbar, cards
+- [x] Dashboard com filtro Hoje / Semana / Mês
+- [x] Alunos em circulação (tempo real) e alunos que excederam o limite
+- [x] Módulo de circulação com timer de 5 minutos e alertas visuais/sonoros
+- [x] Módulo de ocorrências (CRUD completo)
+- [x] Módulo de chamada/frequência por turma
+- [x] CRUD de alunos e turmas
 - [x] Admin customizado com Django Jazzmin
-- [ ] Módulo de ocorrências
-- [ ] Módulo de chamada
-- [ ] Telas de alunos e turmas
-- [ ] Sistema de perfis e permissões
-- [ ] Notificações push
-- [ ] Importação via planilha Excel
-- [ ] Deploy no Railway
+- [x] Select dinâmico turma → aluno via AJAX
+- [ ] Dashboard personalizado para Responsável
+- [ ] Notificações push para responsáveis
+- [ ] Importação de alunos via planilha Excel
+- [ ] Deploy no Railway com PostgreSQL
 
 ---
 
@@ -124,4 +194,4 @@ Acesse `http://127.0.0.1:8000/login/`
 
 ---
 
-<p align="center">Desenvolvido como TCC</p>
+<p align="center">Desenvolvido como TCC — Técnico em Desenvolvimento de Sistemas</p>
